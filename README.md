@@ -40,6 +40,26 @@ Tavily API ve RSS kaynaklarından en güncel yapay zeka haberlerini çekerek
 }
 ```
 
+### VS Code + GitHub Copilot ile Kullanım
+
+VS Code'da `.vscode/mcp.json` dosyası oluşturun (veya Command Palette > `MCP: Add Server`):
+
+```json
+{
+  "servers": {
+    "ai-haber-bulteni": {
+      "command": "npx",
+      "args": ["-y", "ai-haber-bulteni-mcp"],
+      "env": {
+        "TAVILY_API_KEY": "BURAYA_TAVILY_API_ANAHTARINIZI_YAZIN"
+      }
+    }
+  }
+}
+```
+
+> **Not:** VS Code'da MCP desteği için GitHub Copilot eklentisi (v1.100+) ve `chat.mcp.enabled` ayarının aktif olması gerekir. Ayarlar > `chat.mcp.enabled` > `true` yapın.
+
 ### Windsurf ile Kullanım
 
 `~/.codeium/windsurf/mcp_config.json` dosyanıza ekleyin:
