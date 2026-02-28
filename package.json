@@ -1,0 +1,49 @@
+{
+  "name": "ai-haber-bulteni-mcp",
+  "version": "1.0.0",
+  "description": "Türkçe yapay zeka haber bülteni oluşturan MCP sunucusu",
+  "keywords": ["mcp", "ai", "newsletter", "turkish", "tavily", "rss", "yapay-zeka"],
+  "author": "erhankaraarslan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erhankaraarslan/ai-haber-bulteni-mcp.git"
+  },
+  "homepage": "https://github.com/erhankaraarslan/ai-haber-bulteni-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/erhankaraarslan/ai-haber-bulteni-mcp/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ai-haber-bulteni-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": ["dist", "README.md", "LICENSE"],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.0",
+    "axios": "^1.7.0",
+    "rss-parser": "^3.13.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.4.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}
