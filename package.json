@@ -1,6 +1,6 @@
 {
   "name": "ai-haber-bulteni-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Türkçe yapay zeka haber bülteni oluşturan MCP sunucusu",
   "keywords": ["mcp", "ai", "newsletter", "turkish", "tavily", "rss", "yapay-zeka"],
   "author": "erhankaraarslan",
