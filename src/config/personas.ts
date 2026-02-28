@@ -82,6 +82,49 @@ export const PERSONA_CONFIG: Record<Persona, PersonaConfig> = {
 ## 💡 Haftanın İpucu (Hemen Deneyin)
 ## 🔗 Tüm Kaynaklar`,
   },
+
+  cursor_user: {
+    label: "Cursor IDE Kullanıcıları",
+    tavilyQuery:
+      "Cursor AI IDE new features updates agent mode, cursor rules .cursor/rules AGENTS.md, " +
+      "Cursor composer MCP server integration, Cursor AI code editor tips best practices, " +
+      "Cursor vs Copilot vs Windsurf comparison 2026",
+    tone:
+      "Pratik, iş akışı odaklı ve 'hemen dene' yaklaşımlı. Cursor'a özgü özellikler " +
+      "(Agent mode, Composer, Rules, MCP entegrasyonu) ön planda olmalı. Her haberin sonunda " +
+      "Cursor'da nasıl uygulanacağı belirtilmeli. Model karşılaştırmaları (Claude vs GPT vs " +
+      "Gemini maliyet/performans) tablolarla desteklenmeli. Okuyucu Cursor kullanıcısı olduğu " +
+      "için IDE temellerini açıklamaya gerek yok.",
+    newsletterFormat: `
+## 🔔 Haftanın Önemli Güncellemeleri (Top 3)
+## ⚡ Cursor Yeni Özellikler & Güncellemeler
+## 📐 Cursor Rules & Context Engineering
+## 🧠 AI Model Güncellemeleri (Claude, GPT, Gemini)
+## 🔌 MCP Sunucuları & Entegrasyonlar
+## 💡 Haftanın İpucu (Hemen Deneyin)
+## 🔗 Tüm Kaynaklar`,
+  },
+
+  windsurf_user: {
+    label: "Windsurf IDE Kullanıcıları",
+    tavilyQuery:
+      "Windsurf AI IDE new features updates, Windsurf cascade flows agentic coding, " +
+      "Windsurf rules .windsurfrules AI context, Windsurf MCP server integration, " +
+      "Windsurf vs Cursor vs Copilot comparison 2026",
+    tone:
+      "Pratik, iş akışı odaklı ve 'hemen dene' yaklaşımlı. Windsurf'e özgü özellikler " +
+      "(Cascade, Flows, Rules, MCP entegrasyonu) ön planda olmalı. Her haberin sonunda " +
+      "Windsurf'te nasıl uygulanacağı belirtilmeli. Model karşılaştırmaları tablolarla " +
+      "desteklenmeli. Okuyucu Windsurf kullanıcısı olduğu için IDE temellerini açıklamaya gerek yok.",
+    newsletterFormat: `
+## 🔔 Haftanın Önemli Güncellemeleri (Top 3)
+## 🏄 Windsurf Yeni Özellikler & Güncellemeler
+## 🌊 Cascade & Flows İpuçları
+## 🧠 AI Model Güncellemeleri (Claude, GPT, Gemini)
+## 🔌 MCP Sunucuları & Entegrasyonlar
+## 💡 Haftanın İpucu (Hemen Deneyin)
+## 🔗 Tüm Kaynaklar`,
+  },
 };
 
 export const TIMEFRAME_MAP: Record<Timeframe, string> = {

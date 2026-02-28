@@ -1,6 +1,6 @@
 {
   "name": "ai-haber-bulteni-mcp",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Türkçe yapay zeka haber bülteni oluşturan MCP sunucusu",
   "keywords": [
     "mcp",

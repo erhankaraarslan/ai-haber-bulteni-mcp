@@ -40,9 +40,9 @@ const newsParamsShape = {
     .default("weekly")
     .describe("Haber zaman dilimi: daily (günlük), weekly (haftalık), monthly (aylık)"),
   persona: z
-    .enum(["c_level", "product_manager", "developer", "copilot_user"])
+    .enum(["c_level", "product_manager", "developer", "copilot_user", "cursor_user", "windsurf_user"])
     .default("developer")
-    .describe("Hedef kitle: c_level (yönetici), product_manager, developer (geliştirici), copilot_user (VS Code + Copilot)"),
+    .describe("Hedef kitle: c_level (yönetici), product_manager, developer, copilot_user (VS Code + Copilot), cursor_user (Cursor IDE), windsurf_user (Windsurf IDE)"),
   maxItems: z
     .number()
     .min(3)
@@ -244,6 +244,8 @@ server.tool(
       product_manager: getSourcesForPersona("product_manager").map((s) => `• ${s.name}: ${s.url}`),
       developer: getSourcesForPersona("developer").map((s) => `• ${s.name}: ${s.url}`),
       copilot_user: getSourcesForPersona("copilot_user").map((s) => `• ${s.name}: ${s.url}`),
+      cursor_user: getSourcesForPersona("cursor_user").map((s) => `• ${s.name}: ${s.url}`),
+      windsurf_user: getSourcesForPersona("windsurf_user").map((s) => `• ${s.name}: ${s.url}`),
     };
 
     const total = RSS_SOURCES.length;
@@ -261,7 +263,11 @@ server.tool(
             `\n\n### Developer (${grouped.developer.length} kaynak)\n` +
             grouped.developer.join("\n") +
             `\n\n### VS Code + Copilot (${grouped.copilot_user.length} kaynak)\n` +
-            grouped.copilot_user.join("\n"),
+            grouped.copilot_user.join("\n") +
+            `\n\n### Cursor IDE (${grouped.cursor_user.length} kaynak)\n` +
+            grouped.cursor_user.join("\n") +
+            `\n\n### Windsurf IDE (${grouped.windsurf_user.length} kaynak)\n` +
+            grouped.windsurf_user.join("\n"),
         },
       ],
     };
@@ -275,6 +281,8 @@ const PERSONA_LABELS_SHORT: Record<string, string> = {
   product_manager: "product-manager",
   developer: "developer",
   copilot_user: "copilot-user",
+  cursor_user: "cursor-user",
+  windsurf_user: "windsurf-user",
 };
 
 const PERSONA_LABEL_MAP: Record<string, string> = {
@@ -282,6 +290,8 @@ const PERSONA_LABEL_MAP: Record<string, string> = {
   product_manager: "Ürün Yöneticileri",
   developer: "Yazılım Geliştiriciler",
   copilot_user: "VS Code + Copilot Kullanıcıları",
+  cursor_user: "Cursor IDE Kullanıcıları",
+  windsurf_user: "Windsurf IDE Kullanıcıları",
 };
 
 const TIMEFRAME_LABEL_MAP: Record<string, string> = {
@@ -326,7 +336,7 @@ server.tool(
       .min(50)
       .describe("Kaydedilecek bülten içeriği (markdown formatında)"),
     persona: z
-      .enum(["c_level", "product_manager", "developer", "copilot_user"])
+      .enum(["c_level", "product_manager", "developer", "copilot_user", "cursor_user", "windsurf_user"])
       .default("developer")
       .describe("Bültenin hedef kitlesi"),
     timeframe: z
@@ -549,7 +559,7 @@ server.prompt(
   "Kişiselleştirilmiş Türkçe yapay zeka bülteni oluşturur",
   {
     persona: z
-      .enum(["c_level", "product_manager", "developer", "copilot_user"])
+      .enum(["c_level", "product_manager", "developer", "copilot_user", "cursor_user", "windsurf_user"])
       .default("developer")
       .describe("Hedef kitle"),
     timeframe: z

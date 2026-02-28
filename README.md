@@ -5,7 +5,7 @@ Tavily API ve RSS kaynaklarından en güncel yapay zeka haberlerini çekerek
 
 ## ✨ Özellikler
 
-- 📰 4 farklı hedef kitle: C-Level, Ürün Yöneticisi, Geliştirici, VS Code + Copilot
+- 📰 6 farklı hedef kitle: C-Level, Ürün Yöneticisi, Geliştirici, VS Code + Copilot, Cursor, Windsurf
 - 📅 3 farklı zaman dilimi: Günlük, Haftalık, Aylık
 - 🔍 Tavily API ile gerçek zamanlı haber araması (güvenilir domain filtrelemesi dahil)
 - 📡 27 güvenilir RSS kaynağı (TechCrunch, OpenAI, GitHub Copilot, Cursor, Windsurf vb.)
@@ -125,6 +125,10 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 
 > "VS Code + Copilot kullanıcıları için haftalık bülten oluştur"
 
+> "Cursor kullanıcıları için haftalık AI bültenini hazırla"
+
+> "Windsurf kullanıcıları için bu haftanın bültenini oluştur"
+
 > "Hangi haber kaynakları kullanılıyor?"
 
 > "Bu bülteni kaydet"
@@ -139,7 +143,7 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 
 | Parametre | Değerler | Varsayılan | Açıklama |
 |-----------|----------|------------|----------|
-| `persona` | `c_level`, `product_manager`, `developer`, `copilot_user` | `developer` | Hedef kitle |
+| `persona` | `c_level`, `product_manager`, `developer`, `copilot_user`, `cursor_user`, `windsurf_user` | `developer` | Hedef kitle |
 | `timeframe` | `daily`, `weekly`, `monthly` | `weekly` | Zaman dilimi |
 | `maxItems` | `3` - `20` | `10` | Tavily toplam / RSS kaynak başına max haber |
 | `searchDepth` | `basic`, `advanced` | `basic` | Tavily arama derinliği (advanced = 2x kredi) |
@@ -156,26 +160,26 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 - **Wired AI** — C-Level, PM
 
 **Ürün & Platform:**
-- **OpenAI News** — PM, Developer
-- **Anthropic News** — PM, Developer
-- **Google AI Blog** — PM, C-Level
+- **OpenAI News** — PM, Developer, Cursor, Windsurf
+- **Anthropic News** — PM, Developer, Cursor, Windsurf
+- **Google AI Blog** — PM, C-Level, Cursor, Windsurf
 - **The Verge AI** — PM
 - **AWS Machine Learning** — PM, Developer, C-Level
 
 **Developer & Araştırma:**
 - **HuggingFace Blog** — Developer
-- **Simon Willison's Blog** — Developer
+- **Simon Willison's Blog** — Developer, Cursor, Windsurf
 - **MarkTechPost** — Developer
 - **Ars Technica** — Developer
 - **Towards Data Science** — Developer
-- **Latent Space** — Developer
+- **Latent Space** — Developer, Cursor, Windsurf
 
 **AI Kodlama Araçları:**
-- **GitHub Blog** — Developer, PM, Copilot User
-- **GitHub Copilot Changelog** — Developer, Copilot User
-- **VS Code Blog** — Developer, Copilot User
-- **Cursor Announcements** — Developer
-- **Windsurf (Codeium) Blog** — Developer
+- **GitHub Blog** — Developer, PM, Copilot, Cursor, Windsurf
+- **GitHub Copilot Changelog** — Developer, Copilot
+- **VS Code Blog** — Developer, Copilot
+- **Cursor Announcements** — Developer, Cursor
+- **Windsurf (Codeium) Blog** — Developer, Windsurf
 
 **VS Code + Copilot Ekosistemi:**
 - **GitHub Changelog** — Copilot User

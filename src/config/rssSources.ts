@@ -49,19 +49,19 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "OpenAI News",
     url: "https://openai.com/news/rss.xml",
-    persona: ["product_manager", "developer"],
+    persona: ["product_manager", "developer", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
     name: "Anthropic News",
     url: "https://openrss.org/feed/www.anthropic.com/news",
-    persona: ["product_manager", "developer"],
+    persona: ["product_manager", "developer", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
     name: "Google AI Blog",
     url: "https://blog.google/technology/ai/rss/",
-    persona: ["product_manager", "c_level"],
+    persona: ["product_manager", "c_level", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
@@ -87,7 +87,7 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "Simon Willison's Blog",
     url: "https://simonwillison.net/atom/everything/",
-    persona: ["developer"],
+    persona: ["developer", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
@@ -111,7 +111,7 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "Latent Space",
     url: "https://www.latent.space/feed",
-    persona: ["developer"],
+    persona: ["developer", "cursor_user", "windsurf_user"],
     language: "en",
   },
 
@@ -119,7 +119,7 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "GitHub Blog",
     url: "https://github.blog/feed/",
-    persona: ["developer", "product_manager", "copilot_user"],
+    persona: ["developer", "product_manager", "copilot_user", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
@@ -137,13 +137,13 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "Cursor Announcements",
     url: "https://forum.cursor.com/c/announcements/11.rss",
-    persona: ["developer"],
+    persona: ["developer", "cursor_user"],
     language: "en",
   },
   {
     name: "Windsurf (Codeium) Blog",
     url: "https://windsurf.com/feed.xml",
-    persona: ["developer"],
+    persona: ["developer", "windsurf_user"],
     language: "en",
   },
 
