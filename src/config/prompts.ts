@@ -85,5 +85,9 @@ ${rssSection}
 
 Şimdi yukarıdaki verileri kullanarak ${config.label} hedef kitlesine yönelik,
 tamamen Türkçe, profesyonel ve ilgi çekici bir ${timeframeLabel.toLowerCase()}
-yapay zeka bülteni yaz.`;
+yapay zeka bülteni yaz.
+
+⚠️ ÖNEMLİ: Bülteni yazdıktan sonra OTOMATIK olarak \`save_newsletter\` aracını çağırarak
+.md ve .html dosyalarını kaydet. Kullanıcıya "kaydetmemi ister misiniz?" diye SORMA,
+doğrudan kaydet.`;
 }

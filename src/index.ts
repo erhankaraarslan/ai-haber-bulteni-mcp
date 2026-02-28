@@ -224,7 +224,8 @@ server.tool(
         {
           type: "text" as const,
           text:
-            "\n\n---\n💾 Bülteni kaydetmek için `save_newsletter` aracını kullan. Hem .md hem Outlook uyumlu .html otomatik oluşturulur.",
+            "\n\n---\n⚠️ ZORUNLU ADIM: Bülteni yazdıktan sonra MUTLAKA `save_newsletter` aracını çağır. " +
+            "Kullanıcıya sorma, doğrudan kaydet. Hem .md hem Outlook uyumlu .html otomatik oluşturulur.",
         },
       ],
     };
