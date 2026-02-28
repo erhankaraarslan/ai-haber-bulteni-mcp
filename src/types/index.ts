@@ -1,5 +1,5 @@
 export type Timeframe = "daily" | "weekly" | "monthly";
-export type Persona = "c_level" | "product_manager" | "developer";
+export type Persona = "c_level" | "product_manager" | "developer" | "copilot_user";
 export type SearchDepth = "basic" | "advanced";
 
 export interface NewsItem {

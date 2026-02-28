@@ -60,6 +60,28 @@ export const PERSONA_CONFIG: Record<Persona, PersonaConfig> = {
 ## ⚡ Hızlı Başlangıç: Denemeye Değer (kurulum komutları ile)
 ## 🔗 Tüm Kaynaklar`,
   },
+
+  copilot_user: {
+    label: "VS Code + GitHub Copilot Kullanıcıları",
+    tavilyQuery:
+      "GitHub Copilot new features updates agent mode, VS Code AI extensions MCP server, " +
+      "copilot-instructions.md context engineering prompt files, " +
+      "GitHub Copilot premium requests token cost optimization, " +
+      "VS Code AI coding assistant tips best practices 2026",
+    tone:
+      "Pratik, aksiyona dönük ve 'hemen uygula' odaklı. Her haberin sonunda 'bunu şimdi nasıl " +
+      "denersiniz' bilgisi olmalı. Karşılaştırma tabloları (model bazında maliyet, özellik farkı " +
+      "vb.) tercih edilmeli. Gereksiz teorik açıklamalardan kaçınılmalı; okuyucu zaten VS Code " +
+      "kullandığı için temel kavramları bilir.",
+    newsletterFormat: `
+## 🔔 Haftanın Önemli Güncellemeleri (Top 3)
+## 🤖 Copilot & VS Code Yeni Özellikler
+## 🧩 Context Engineering & Prompt Yönetimi
+## 💰 Maliyet Optimizasyonu & Premium Request İpuçları
+## 🔌 MCP Sunucuları & Eklenti Ekosistemi
+## 💡 Haftanın İpucu (Hemen Deneyin)
+## 🔗 Tüm Kaynaklar`,
+  },
 };
 
 export const TIMEFRAME_MAP: Record<Timeframe, string> = {

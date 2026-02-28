@@ -119,19 +119,19 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "GitHub Blog",
     url: "https://github.blog/feed/",
-    persona: ["developer", "product_manager"],
+    persona: ["developer", "product_manager", "copilot_user"],
     language: "en",
   },
   {
     name: "GitHub Copilot Changelog",
     url: "https://github.blog/changelog/label/copilot/feed/",
-    persona: ["developer"],
+    persona: ["developer", "copilot_user"],
     language: "en",
   },
   {
     name: "VS Code Blog",
     url: "https://code.visualstudio.com/feed.xml",
-    persona: ["developer"],
+    persona: ["developer", "copilot_user"],
     language: "en",
   },
   {
@@ -144,6 +144,32 @@ export const RSS_SOURCES: RssSource[] = [
     name: "Windsurf (Codeium) Blog",
     url: "https://windsurf.com/feed.xml",
     persona: ["developer"],
+    language: "en",
+  },
+
+  // ── COPILOT USER (VS Code + GitHub Copilot) ──────────────────────────────
+  {
+    name: "GitHub Changelog",
+    url: "https://github.blog/changelog/feed/",
+    persona: ["copilot_user"],
+    language: "en",
+  },
+  {
+    name: "VS Code DevBlogs",
+    url: "https://devblogs.microsoft.com/vscode-blog/feed/",
+    persona: ["copilot_user"],
+    language: "en",
+  },
+  {
+    name: "Ken Muse Blog",
+    url: "https://www.kenmuse.com/feed/",
+    persona: ["copilot_user"],
+    language: "en",
+  },
+  {
+    name: "GitHub AI/ML Blog",
+    url: "https://github.blog/ai-and-ml/feed/",
+    persona: ["copilot_user"],
     language: "en",
   },
 ];

@@ -40,9 +40,9 @@ const newsParamsShape = {
     .default("weekly")
     .describe("Haber zaman dilimi: daily (günlük), weekly (haftalık), monthly (aylık)"),
   persona: z
-    .enum(["c_level", "product_manager", "developer"])
+    .enum(["c_level", "product_manager", "developer", "copilot_user"])
     .default("developer")
-    .describe("Hedef kitle: c_level (yönetici), product_manager, developer (geliştirici)"),
+    .describe("Hedef kitle: c_level (yönetici), product_manager, developer (geliştirici), copilot_user (VS Code + Copilot)"),
   maxItems: z
     .number()
     .min(3)
@@ -242,6 +242,7 @@ server.tool(
       c_level: getSourcesForPersona("c_level").map((s) => `• ${s.name}: ${s.url}`),
       product_manager: getSourcesForPersona("product_manager").map((s) => `• ${s.name}: ${s.url}`),
       developer: getSourcesForPersona("developer").map((s) => `• ${s.name}: ${s.url}`),
+      copilot_user: getSourcesForPersona("copilot_user").map((s) => `• ${s.name}: ${s.url}`),
     };
 
     const total = RSS_SOURCES.length;
@@ -257,7 +258,9 @@ server.tool(
             `\n\n### Product Manager (${grouped.product_manager.length} kaynak)\n` +
             grouped.product_manager.join("\n") +
             `\n\n### Developer (${grouped.developer.length} kaynak)\n` +
-            grouped.developer.join("\n"),
+            grouped.developer.join("\n") +
+            `\n\n### VS Code + Copilot (${grouped.copilot_user.length} kaynak)\n` +
+            grouped.copilot_user.join("\n"),
         },
       ],
     };
@@ -270,12 +273,14 @@ const PERSONA_LABELS_SHORT: Record<string, string> = {
   c_level: "c-level",
   product_manager: "product-manager",
   developer: "developer",
+  copilot_user: "copilot-user",
 };
 
 const PERSONA_LABEL_MAP: Record<string, string> = {
   c_level: "C-Level Yöneticiler",
   product_manager: "Ürün Yöneticileri",
   developer: "Yazılım Geliştiriciler",
+  copilot_user: "VS Code + Copilot Kullanıcıları",
 };
 
 const TIMEFRAME_LABEL_MAP: Record<string, string> = {
@@ -320,7 +325,7 @@ server.tool(
       .min(50)
       .describe("Kaydedilecek bülten içeriği (markdown formatında)"),
     persona: z
-      .enum(["c_level", "product_manager", "developer"])
+      .enum(["c_level", "product_manager", "developer", "copilot_user"])
       .default("developer")
       .describe("Bültenin hedef kitlesi"),
     timeframe: z
@@ -543,7 +548,7 @@ server.prompt(
   "Kişiselleştirilmiş Türkçe yapay zeka bülteni oluşturur",
   {
     persona: z
-      .enum(["c_level", "product_manager", "developer"])
+      .enum(["c_level", "product_manager", "developer", "copilot_user"])
       .default("developer")
       .describe("Hedef kitle"),
     timeframe: z

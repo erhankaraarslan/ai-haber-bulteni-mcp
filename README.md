@@ -5,10 +5,10 @@ Tavily API ve RSS kaynaklarından en güncel yapay zeka haberlerini çekerek
 
 ## ✨ Özellikler
 
-- 📰 3 farklı hedef kitle: C-Level, Ürün Yöneticisi, Geliştirici
+- 📰 4 farklı hedef kitle: C-Level, Ürün Yöneticisi, Geliştirici, VS Code + Copilot
 - 📅 3 farklı zaman dilimi: Günlük, Haftalık, Aylık
 - 🔍 Tavily API ile gerçek zamanlı haber araması (güvenilir domain filtrelemesi dahil)
-- 📡 23 güvenilir RSS kaynağı (TechCrunch, OpenAI, GitHub Copilot, Cursor, Windsurf vb.)
+- 📡 27 güvenilir RSS kaynağı (TechCrunch, OpenAI, GitHub Copilot, Cursor, Windsurf vb.)
 - ⚡ 30 dakikalık akıllı önbellekleme (cache)
 - 🔄 Otomatik duplikasyon tespiti (URL + başlık benzerlik analizi)
 - 🛡️ Hata toleranslı mimari (retry mekanizması, bir kaynak başarısız olursa diğerleri devam eder)
@@ -123,6 +123,8 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 
 > "Ürün yöneticileri için günlük AI haberlerini getir"
 
+> "VS Code + Copilot kullanıcıları için haftalık bülten oluştur"
+
 > "Hangi haber kaynakları kullanılıyor?"
 
 > "Bu bülteni kaydet"
@@ -137,12 +139,12 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 
 | Parametre | Değerler | Varsayılan | Açıklama |
 |-----------|----------|------------|----------|
-| `persona` | `c_level`, `product_manager`, `developer` | `developer` | Hedef kitle |
+| `persona` | `c_level`, `product_manager`, `developer`, `copilot_user` | `developer` | Hedef kitle |
 | `timeframe` | `daily`, `weekly`, `monthly` | `weekly` | Zaman dilimi |
 | `maxItems` | `3` - `20` | `10` | Tavily toplam / RSS kaynak başına max haber |
 | `searchDepth` | `basic`, `advanced` | `basic` | Tavily arama derinliği (advanced = 2x kredi) |
 
-## 📡 RSS Kaynakları (23 kaynak)
+## 📡 RSS Kaynakları (27 kaynak)
 
 **C-Level & Strateji:**
 - **TechCrunch AI** — C-Level, PM
@@ -169,11 +171,17 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 - **Latent Space** — Developer
 
 **AI Kodlama Araçları:**
-- **GitHub Blog** — Developer, PM
-- **GitHub Copilot Changelog** — Developer
-- **VS Code Blog** — Developer
+- **GitHub Blog** — Developer, PM, Copilot User
+- **GitHub Copilot Changelog** — Developer, Copilot User
+- **VS Code Blog** — Developer, Copilot User
 - **Cursor Announcements** — Developer
 - **Windsurf (Codeium) Blog** — Developer
+
+**VS Code + Copilot Ekosistemi:**
+- **GitHub Changelog** — Copilot User
+- **VS Code DevBlogs** — Copilot User
+- **Ken Muse Blog** — Copilot User
+- **GitHub AI/ML Blog** — Copilot User
 
 ## 🏗️ Geliştirme
 
