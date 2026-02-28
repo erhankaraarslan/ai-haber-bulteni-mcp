@@ -1,8 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { mkdir, writeFile, readdir } from "node:fs/promises";
+import { mkdir, writeFile, readFile, readdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { marked } from "marked";
+import juice from "juice";
+import { buildEmailHtml } from "./templates/emailTemplate.js";
 
 if (process.env.NODE_ENV !== "production") {
   await import("dotenv/config").catch(() => {});
@@ -384,6 +387,115 @@ server.tool(
           {
             type: "text" as const,
             text: `📂 Bülten klasörü henüz oluşturulmamış veya erişilemiyor.`,
+          },
+        ],
+      };
+    }
+  }
+);
+
+// ── Tool 6: export_newsletter_html ──────────────────────────────────────────
+
+const PERSONA_LABEL_MAP: Record<string, string> = {
+  c_level: "C-Level Yöneticiler",
+  product_manager: "Ürün Yöneticileri",
+  developer: "Yazılım Geliştiriciler",
+};
+
+const TIMEFRAME_LABEL_MAP: Record<string, string> = {
+  daily: "Günlük",
+  weekly: "Haftalık",
+  monthly: "Aylık",
+};
+
+server.tool(
+  "export_newsletter_html",
+  "Kaydedilmiş bir .md bülteni Outlook uyumlu, markalı HTML e-posta şablonuna " +
+    "dönüştürüp .html olarak kaydeder. Dosyayı tarayıcıda açıp Outlook'a yapıştırabilirsiniz.",
+  {
+    filename: z
+      .string()
+      .describe(
+        "Dönüştürülecek .md dosya adı (newsletters/ altında, ör: ai-bulten-developer-weekly-2026-02-28.md)"
+      ),
+    logoUrl: z
+      .string()
+      .optional()
+      .describe("Şirket logosu URL (opsiyonel, uzak URL olmalı)"),
+    brandColor: z
+      .string()
+      .default("#1a73e8")
+      .describe("Marka ana rengi (hex formatında, ör: #1a73e8)"),
+    companyName: z
+      .string()
+      .optional()
+      .describe("Şirket adı (footer'da görünür)"),
+    outputDir: z
+      .string()
+      .default("newsletters")
+      .describe("Bülten klasörü (varsayılan: newsletters/)"),
+  },
+  async ({ filename, logoUrl, brandColor, companyName, outputDir }) => {
+    try {
+      const dir = resolve(process.cwd(), outputDir);
+      const mdPath = join(dir, filename);
+
+      const mdContent = await readFile(mdPath, "utf-8");
+
+      let bodyHtml = await marked.parse(mdContent, { async: false });
+      bodyHtml = bodyHtml.replace(/<table>/g, '<table class="data-table">');
+
+      const segments = filename.replace(".md", "").split("-");
+      const dateSlug = segments.slice(-3).join("-");
+      const timeframeSlug = segments.at(-4) ?? "weekly";
+      const personaSlug = segments.slice(2, -4).join("_");
+
+      const personaLabel =
+        PERSONA_LABEL_MAP[personaSlug] ?? personaSlug;
+      const timeframeLabel =
+        TIMEFRAME_LABEL_MAP[timeframeSlug] ?? timeframeSlug;
+
+      const rawHtml = buildEmailHtml({
+        bodyHtml,
+        personaLabel,
+        timeframeLabel,
+        date: dateSlug,
+        brandColor,
+        logoUrl,
+        companyName,
+      });
+
+      const inlinedHtml = juice(rawHtml);
+
+      const htmlFilename = filename.replace(/\.md$/, ".html");
+      const htmlPath = join(dir, htmlFilename);
+      await writeFile(htmlPath, inlinedHtml, "utf-8");
+
+      process.stderr.write(`[HTML EXPORT] ${htmlPath}\n`);
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text:
+              `✅ HTML e-posta başarıyla oluşturuldu!\n\n` +
+              `📄 Dosya: \`${htmlPath}\`\n` +
+              `🎨 Marka Rengi: ${brandColor}\n` +
+              `📏 Boyut: ${(inlinedHtml.length / 1024).toFixed(1)} KB\n\n` +
+              `### Outlook'ta Gönderme:\n` +
+              `1. \`${htmlFilename}\` dosyasını tarayıcıda açın\n` +
+              `2. **Ctrl+A** (tümünü seç) → **Ctrl+C** (kopyala)\n` +
+              `3. Outlook'ta yeni e-posta → gövdeye **Ctrl+V** (yapıştır)\n` +
+              `4. Gönderin!`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `❌ HTML dönüştürme hatası: ${(error as Error).message}`,
           },
         ],
       };

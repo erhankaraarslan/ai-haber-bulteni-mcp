@@ -1,8 +1,16 @@
 {
   "name": "ai-haber-bulteni-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Türkçe yapay zeka haber bülteni oluşturan MCP sunucusu",
-  "keywords": ["mcp", "ai", "newsletter", "turkish", "tavily", "rss", "yapay-zeka"],
+  "keywords": [
+    "mcp",
+    "ai",
+    "newsletter",
+    "turkish",
+    "tavily",
+    "rss",
+    "yapay-zeka"
+  ],
   "author": "erhankaraarslan",
   "repository": {
     "type": "git",
@@ -18,7 +26,11 @@
     "ai-haber-bulteni-mcp": "./dist/index.js"
   },
   "main": "./dist/index.js",
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -35,6 +47,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",
     "axios": "^1.7.0",
+    "juice": "^11.1.1",
+    "marked": "^17.0.3",
     "rss-parser": "^3.13.0",
     "zod": "^3.23.0"
   },

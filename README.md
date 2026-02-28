@@ -104,6 +104,7 @@ VS Code'da `.vscode/mcp.json` dosyası oluşturun (veya Command Palette > `MCP: 
 | `generate_newsletter` | Çekilen haberleri Türkçe bülten formatına dönüştürür |
 | `save_newsletter` | Oluşturulan bülteni `.md` dosyası olarak kaydeder |
 | `list_newsletters` | Daha önce kaydedilmiş bülten dosyalarını listeler |
+| `export_newsletter_html` | `.md` bülteni Outlook uyumlu, markalı HTML e-posta şablonuna dönüştürür |
 | `get_available_sources` | Aktif RSS kaynaklarını persona bazında listeler |
 
 ## 📝 Prompt
@@ -127,6 +128,10 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 > "Bu bülteni kaydet"
 
 > "Kayıtlı bültenleri listele"
+
+> "Developer bültenini HTML e-posta olarak dışa aktar"
+
+> "C-Level bültenini şirket logomuz ve marka rengimizle HTML e-postaya dönüştür"
 
 ## 🔑 Parametreler
 
@@ -198,6 +203,7 @@ npm test
 
 - [ ] Önem puanlama (kaynak güvenilirliği ve etkileşim verilerine göre sıralama)
 - [ ] Kullanıcının özel RSS kaynağı ekleyebilmesi (parametre olarak)
+- [x] Outlook uyumlu HTML e-posta şablonuna dönüştürme (`export_newsletter_html`)
 - [ ] Çıktı formatı seçimi (Markdown, HTML, Plain Text)
 - [ ] Türkçe haber kaynakları desteği
 - [ ] E-posta ile otomatik bülten gönderimi
