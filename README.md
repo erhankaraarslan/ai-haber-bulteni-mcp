@@ -102,9 +102,9 @@ VS Code'da `.vscode/mcp.json` dosyası oluşturun (veya Command Palette > `MCP: 
 |------|----------|
 | `fetch_ai_news` | Ham AI haberlerini çeker (Tavily + RSS, cache destekli, tablo çıktı) |
 | `generate_newsletter` | Çekilen haberleri Türkçe bülten formatına dönüştürür |
-| `save_newsletter` | Oluşturulan bülteni `.md` dosyası olarak kaydeder |
+| `save_newsletter` | Bülteni `.md` + Outlook uyumlu `.html` olarak otomatik kaydeder |
 | `list_newsletters` | Daha önce kaydedilmiş bülten dosyalarını listeler |
-| `export_newsletter_html` | `.md` bülteni Outlook uyumlu, markalı HTML e-posta şablonuna dönüştürür |
+| `export_newsletter_html` | Mevcut `.md` bülteni farklı marka ayarlarıyla yeniden HTML'e dönüştürür |
 | `get_available_sources` | Aktif RSS kaynaklarını persona bazında listeler |
 
 ## 📝 Prompt

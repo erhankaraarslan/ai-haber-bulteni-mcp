@@ -159,7 +159,7 @@ server.tool(
             `\n| # | Başlık | Kaynak | Tarih | URL |\n` +
             `|---|--------|--------|-------|-----|\n` +
             tableRows +
-            `\n\n💡 Bülten oluşturmak için \`generate_newsletter\`, kaydetmek için \`save_newsletter\` aracını kullanın.`,
+            `\n\n💡 Bülten oluşturmak için \`generate_newsletter\`, kaydetmek için \`save_newsletter\` aracını kullanın. Kaydetme hem .md hem .html üretir.`,
         },
       ],
     };
@@ -224,7 +224,7 @@ server.tool(
         {
           type: "text" as const,
           text:
-            "\n\n---\n💾 Bülteni .md dosyası olarak kaydetmek için `save_newsletter` aracını kullan.",
+            "\n\n---\n💾 Bülteni kaydetmek için `save_newsletter` aracını kullan. Hem .md hem Outlook uyumlu .html otomatik oluşturulur.",
         },
       ],
     };
@@ -272,11 +272,48 @@ const PERSONA_LABELS_SHORT: Record<string, string> = {
   developer: "developer",
 };
 
+const PERSONA_LABEL_MAP: Record<string, string> = {
+  c_level: "C-Level Yöneticiler",
+  product_manager: "Ürün Yöneticileri",
+  developer: "Yazılım Geliştiriciler",
+};
+
+const TIMEFRAME_LABEL_MAP: Record<string, string> = {
+  daily: "Günlük",
+  weekly: "Haftalık",
+  monthly: "Aylık",
+};
+
+async function generateHtmlFromMd(
+  mdContent: string,
+  persona: string,
+  timeframe: string,
+  date: string,
+  brandColor: string,
+  logoUrl?: string,
+  companyName?: string
+): Promise<string> {
+  let bodyHtml = await marked.parse(mdContent, { async: false });
+  bodyHtml = bodyHtml.replace(/<table>/g, '<table class="data-table">');
+
+  const rawHtml = buildEmailHtml({
+    bodyHtml,
+    personaLabel: PERSONA_LABEL_MAP[persona] ?? persona,
+    timeframeLabel: TIMEFRAME_LABEL_MAP[timeframe] ?? timeframe,
+    date,
+    brandColor,
+    logoUrl,
+    companyName,
+  });
+
+  return juice(rawHtml);
+}
+
 server.tool(
   "save_newsletter",
-  "Oluşturulan Türkçe yapay zeka bültenini .md dosyası olarak kaydeder. " +
-    "Bülten içeriğini (markdown) content parametresine yapıştır. " +
-    "Dosya newsletters/ klasörüne tarih ve persona bilgisiyle kaydedilir.",
+  "Oluşturulan Türkçe yapay zeka bültenini kaydeder. " +
+    "Hem .md hem de Outlook uyumlu .html dosyası otomatik oluşturulur. " +
+    "Bülten içeriğini (markdown) content parametresine yapıştır.",
   {
     content: z
       .string()
@@ -290,24 +327,42 @@ server.tool(
       .enum(["daily", "weekly", "monthly"])
       .default("weekly")
       .describe("Bültenin zaman dilimi"),
+    logoUrl: z
+      .string()
+      .optional()
+      .describe("Şirket logosu URL (opsiyonel, HTML şablonunda kullanılır)"),
+    brandColor: z
+      .string()
+      .default("#1a73e8")
+      .describe("Marka ana rengi hex (HTML şablonu için, ör: #1a73e8)"),
+    companyName: z
+      .string()
+      .optional()
+      .describe("Şirket adı (HTML footer'da görünür)"),
     outputDir: z
       .string()
       .default("newsletters")
       .describe("Çıktı klasörü (varsayılan: newsletters/)"),
   },
-  async ({ content, persona, timeframe, outputDir }) => {
+  async ({ content, persona, timeframe, logoUrl, brandColor, companyName, outputDir }) => {
     try {
       const dir = resolve(process.cwd(), outputDir);
       await mkdir(dir, { recursive: true });
 
       const date = new Date().toISOString().slice(0, 10);
       const personaSlug = PERSONA_LABELS_SHORT[persona] ?? persona;
-      const filename = `ai-bulten-${personaSlug}-${timeframe}-${date}.md`;
-      const filepath = join(dir, filename);
+      const mdFilename = `ai-bulten-${personaSlug}-${timeframe}-${date}.md`;
+      const mdPath = join(dir, mdFilename);
+      await writeFile(mdPath, content, "utf-8");
+      process.stderr.write(`[KAYIT] MD: ${mdPath}\n`);
 
-      await writeFile(filepath, content, "utf-8");
-
-      process.stderr.write(`[KAYIT] Bülten kaydedildi: ${filepath}\n`);
+      const htmlFilename = mdFilename.replace(/\.md$/, ".html");
+      const htmlPath = join(dir, htmlFilename);
+      const inlinedHtml = await generateHtmlFromMd(
+        content, persona, timeframe, date, brandColor, logoUrl, companyName
+      );
+      await writeFile(htmlPath, inlinedHtml, "utf-8");
+      process.stderr.write(`[KAYIT] HTML: ${htmlPath}\n`);
 
       return {
         content: [
@@ -315,10 +370,16 @@ server.tool(
             type: "text" as const,
             text:
               `✅ Bülten başarıyla kaydedildi!\n\n` +
-              `📄 Dosya: \`${filepath}\`\n` +
+              `📄 Markdown: \`${mdPath}\`\n` +
+              `📧 HTML E-posta: \`${htmlPath}\`\n` +
               `👤 Persona: ${persona}\n` +
               `📅 Zaman Dilimi: ${timeframe}\n` +
-              `📏 Boyut: ${(content.length / 1024).toFixed(1)} KB`,
+              `📏 MD: ${(content.length / 1024).toFixed(1)} KB | HTML: ${(inlinedHtml.length / 1024).toFixed(1)} KB\n\n` +
+              `### Outlook'ta Gönderme:\n` +
+              `1. \`${htmlFilename}\` dosyasını tarayıcıda açın\n` +
+              `2. **Ctrl+A** (tümünü seç) → **Ctrl+C** (kopyala)\n` +
+              `3. Outlook'ta yeni e-posta → gövdeye **Ctrl+V** (yapıştır)\n` +
+              `4. Gönderin!`,
           },
         ],
       };
@@ -395,23 +456,13 @@ server.tool(
 );
 
 // ── Tool 6: export_newsletter_html ──────────────────────────────────────────
-
-const PERSONA_LABEL_MAP: Record<string, string> = {
-  c_level: "C-Level Yöneticiler",
-  product_manager: "Ürün Yöneticileri",
-  developer: "Yazılım Geliştiriciler",
-};
-
-const TIMEFRAME_LABEL_MAP: Record<string, string> = {
-  daily: "Günlük",
-  weekly: "Haftalık",
-  monthly: "Aylık",
-};
+// Standalone re-export for changing brand settings on an existing .md file.
 
 server.tool(
   "export_newsletter_html",
-  "Kaydedilmiş bir .md bülteni Outlook uyumlu, markalı HTML e-posta şablonuna " +
-    "dönüştürüp .html olarak kaydeder. Dosyayı tarayıcıda açıp Outlook'a yapıştırabilirsiniz.",
+  "Kaydedilmiş bir .md bülteni farklı marka ayarlarıyla yeniden HTML e-postaya " +
+    "dönüştürür. Not: save_newsletter zaten otomatik HTML üretir; bu araç sadece " +
+    "farklı logo/renk/şirket adı ile yeniden dışa aktarmak için kullanılır.",
   {
     filename: z
       .string()
@@ -438,34 +489,16 @@ server.tool(
   async ({ filename, logoUrl, brandColor, companyName, outputDir }) => {
     try {
       const dir = resolve(process.cwd(), outputDir);
-      const mdPath = join(dir, filename);
-
-      const mdContent = await readFile(mdPath, "utf-8");
-
-      let bodyHtml = await marked.parse(mdContent, { async: false });
-      bodyHtml = bodyHtml.replace(/<table>/g, '<table class="data-table">');
+      const mdContent = await readFile(join(dir, filename), "utf-8");
 
       const segments = filename.replace(".md", "").split("-");
       const dateSlug = segments.slice(-3).join("-");
       const timeframeSlug = segments.at(-4) ?? "weekly";
       const personaSlug = segments.slice(2, -4).join("_");
 
-      const personaLabel =
-        PERSONA_LABEL_MAP[personaSlug] ?? personaSlug;
-      const timeframeLabel =
-        TIMEFRAME_LABEL_MAP[timeframeSlug] ?? timeframeSlug;
-
-      const rawHtml = buildEmailHtml({
-        bodyHtml,
-        personaLabel,
-        timeframeLabel,
-        date: dateSlug,
-        brandColor,
-        logoUrl,
-        companyName,
-      });
-
-      const inlinedHtml = juice(rawHtml);
+      const inlinedHtml = await generateHtmlFromMd(
+        mdContent, personaSlug, timeframeSlug, dateSlug, brandColor, logoUrl, companyName
+      );
 
       const htmlFilename = filename.replace(/\.md$/, ".html");
       const htmlPath = join(dir, htmlFilename);
