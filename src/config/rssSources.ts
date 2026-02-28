@@ -162,7 +162,7 @@ export const RSS_SOURCES: RssSource[] = [
   },
   {
     name: "Ken Muse Blog",
-    url: "https://www.kenmuse.com/feed/",
+    url: "https://www.kenmuse.com/rss/index.xml",
     persona: ["copilot_user"],
     language: "en",
   },
