@@ -1,5 +1,5 @@
 import Parser from "rss-parser";
-import type { NewsItem, Persona, Timeframe } from "../types/index.js";
+import type { NewsItem, Persona, RssSourceResult, Timeframe } from "../types/index.js";
 import { getSourcesForPersona } from "../config/rssSources.js";
 
 const RSS_TIMEOUT_MS = 8_000;
@@ -49,9 +49,14 @@ export async function fetchFromRss(
   persona: Persona,
   timeframe: Timeframe,
   maxItemsPerFeed = MAX_ITEMS_PER_FEED
-): Promise<{ items: NewsItem[]; warnings: string[] }> {
+): Promise<{
+  items: NewsItem[];
+  warnings: string[];
+  sourceResults: RssSourceResult[];
+}> {
   const sources = getSourcesForPersona(persona);
   const warnings: string[] = [];
+  const sourceResults: RssSourceResult[] = [];
   const cutoff = getTimeframeCutoff(timeframe);
 
   const tasks = sources.map((source) => () =>
@@ -86,14 +91,30 @@ export async function fetchFromRss(
   const allItems: NewsItem[] = [];
 
   results.forEach((result, index) => {
+    const source = sources[index];
     if (result.status === "fulfilled") {
-      allItems.push(...result.value);
+      const items = result.value;
+      allItems.push(...items);
+      sourceResults.push({
+        name: source.name,
+        url: source.url,
+        status: "success",
+        itemsCount: items.length,
+      });
     } else {
-      const msg = `"${sources[index].name}" kaynağı yüklenemedi: ${(result.reason as Error)?.message ?? "Bilinmeyen hata"}`;
+      const errMsg = (result.reason as Error)?.message ?? "Bilinmeyen hata";
+      const msg = `"${source.name}" kaynağı yüklenemedi: ${errMsg}`;
       warnings.push(msg);
+      sourceResults.push({
+        name: source.name,
+        url: source.url,
+        status: "error",
+        itemsCount: 0,
+        error: errMsg,
+      });
       process.stderr.write(`[RSS UYARI] ${msg}\n`);
     }
   });
 
-  return { items: allItems, warnings };
+  return { items: allItems, warnings, sourceResults };
 }

@@ -11,6 +11,26 @@ export interface NewsItem {
   relevanceScore?: number;
 }
 
+/** RSS kaynağı tarama sonucu (rapor için) */
+export interface RssSourceResult {
+  name: string;
+  url: string;
+  status: "success" | "error";
+  itemsCount: number;
+  error?: string;
+}
+
+/** Tavily tarama sonucu (rapor için) */
+export interface TavilyScanResult {
+  status: "success" | "error";
+  resultsCount: number;
+  /** Benzersiz domain sayısı */
+  uniqueDomainsCount: number;
+  /** Örnek domainler (en fazla 10) */
+  sampleDomains: string[];
+  error?: string;
+}
+
 export interface FetchNewsResult {
   persona: Persona;
   timeframe: Timeframe;
@@ -19,6 +39,10 @@ export interface FetchNewsResult {
   rssResults: NewsItem[];
   totalCount: number;
   warnings: string[];
+  /** Rapor için: RSS kaynak bazlı sonuçlar */
+  rssSourceResults?: RssSourceResult[];
+  /** Rapor için: Tavily tarama özeti */
+  tavilyScanResult?: TavilyScanResult;
 }
 
 export interface RssSource {

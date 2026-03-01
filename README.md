@@ -104,13 +104,28 @@ VS Code'da `.vscode/mcp.json` dosyası oluşturun (veya Command Palette > `MCP: 
 | `generate_newsletter` | Çekilen haberleri Türkçe bülten formatına dönüştürür |
 | `save_newsletter` | Bülteni `.md` + Outlook uyumlu `.html` olarak otomatik kaydeder |
 | `list_newsletters` | Daha önce kaydedilmiş bülten dosyalarını listeler |
+| `get_newsletter_report` | Tarama raporunu okur (hangi kaynaklar taranmış, hata alanlar vb.) |
 | `export_newsletter_html` | Mevcut `.md` bülteni farklı marka ayarlarıyla yeniden HTML'e dönüştürür |
 | `get_available_sources` | Aktif RSS kaynaklarını persona bazında listeler |
+| `health_check` | Tüm RSS kaynaklarının erişilebilirliğini test eder |
+| `validate_links` | Kaydedilmiş bültendeki URL'leri doğrular |
 
 ### 📁 Bülten Dosyaları Nereye Kaydedilir?
 
 - **Varsayılan:** Açık projenizin/workspace'inizin kökünde `newsletters/` klasörü oluşturulur. Cursor/VS Code MCP'yi workspace dizininde başlattığı için ek ayar gerekmez.
 - **Özel konum:** `NEWSLETTER_OUTPUT_DIR` ortam değişkeni ile farklı bir dizin belirtebilirsiniz.
+
+### 📊 Tarama Raporu
+
+`fetch_ai_news` veya `generate_newsletter` her çalıştığında, `newsletters/newsletter-tarama-raporu.md` dosyası otomatik güncellenir. Raporda:
+
+- **Kaç kaynak tarandı** (Tavily + RSS toplamı)
+- **Hangi haberler çekildi** (ilk 15 örnek)
+- **Hangi RSS kaynakları hata aldı** (404, timeout vb.)
+- **Tavily API durumu** (başarılı/hata, benzersiz domain sayısı)
+- **Uyarılar** (Tavily hatası, RSS yüklenemeyen kaynaklar)
+
+Raporu okumak için `get_newsletter_report` aracını kullanabilirsiniz.
 
 ## 📝 Prompt
 

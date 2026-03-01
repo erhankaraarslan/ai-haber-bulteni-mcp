@@ -26,6 +26,7 @@ if (process.env.NODE_ENV !== "production") {
 import { fetchFromTavily } from "./services/tavilyService.js";
 import { fetchFromRss } from "./services/rssService.js";
 import { cacheService } from "./services/cacheService.js";
+import { appendReportSection } from "./services/reportService.js";
 import { deduplicateNews } from "./utils/dedup.js";
 import { PERSONA_CONFIG, TIMEFRAME_LABELS } from "./config/personas.js";
 import { RSS_SOURCES, getSourcesForPersona } from "./config/rssSources.js";
@@ -92,8 +93,9 @@ async function fetchNewsData(
 
   const tavilyResults =
     tavilyResult.status === "fulfilled" ? tavilyResult.value : [];
-  const rssResults =
-    rssResult.status === "fulfilled" ? rssResult.value.items : [];
+  const rssPayload = rssResult.status === "fulfilled" ? rssResult.value : null;
+  const rssResults = rssPayload?.items ?? [];
+  const rssSourceResults = rssPayload?.sourceResults ?? [];
 
   if (tavilyResult.status === "rejected") {
     const msg = `Tavily API hatası: ${(tavilyResult.reason as Error)?.message}`;
@@ -101,8 +103,8 @@ async function fetchNewsData(
     process.stderr.write(`[TAVILY HATA] ${msg}\n`);
   }
 
-  if (rssResult.status === "fulfilled" && rssResult.value.warnings.length > 0) {
-    warnings.push(...rssResult.value.warnings);
+  if (rssPayload?.warnings && rssPayload.warnings.length > 0) {
+    warnings.push(...rssPayload.warnings);
   } else if (rssResult.status === "rejected") {
     const msg = `RSS hatası: ${(rssResult.reason as Error)?.message}`;
     warnings.push(msg);
@@ -117,9 +119,19 @@ async function fetchNewsData(
     rssResults,
     totalCount: tavilyResults.length + rssResults.length,
     warnings,
+    rssSourceResults,
   };
 
   cacheService.set(cacheKey, result);
+
+  try {
+    const reportDir = resolveOutputDir("newsletters");
+    const reportPath = await appendReportSection(result, reportDir);
+    process.stderr.write(`[RAPOR] ${reportPath}\n`);
+  } catch (err) {
+    process.stderr.write(`[RAPOR UYARI] Rapor yazılamadı: ${(err as Error).message}\n`);
+  }
+
   return result;
 }
 
@@ -171,7 +183,8 @@ server.tool(
             `\n| # | Başlık | Kaynak | Tarih | URL |\n` +
             `|---|--------|--------|-------|-----|\n` +
             tableRows +
-            `\n\n💡 Bülten oluşturmak için \`generate_newsletter\`, kaydetmek için \`save_newsletter\` aracını kullanın. Kaydetme hem .md hem .html üretir.`,
+            `\n\n💡 Bülten oluşturmak için \`generate_newsletter\`, kaydetmek için \`save_newsletter\` aracını kullanın. ` +
+            `Tarama raporu \`newsletters/newsletter-tarama-raporu.md\` dosyasına yazıldı; detaylar için \`get_newsletter_report\` aracını kullanın.`,
         },
       ],
     };
@@ -476,6 +489,52 @@ server.tool(
           {
             type: "text" as const,
             text: `📂 Bülten klasörü henüz oluşturulmamış veya erişilemiyor.`,
+          },
+        ],
+      };
+    }
+  }
+);
+
+// ── Tool 5b: get_newsletter_report ─────────────────────────────────────────────
+
+server.tool(
+  "get_newsletter_report",
+  "Newsletter klasöründeki tarama raporunu okur. Rapor, fetch_ai_news ve " +
+    "generate_newsletter her çalıştığında otomatik güncellenir; taranan kaynak sayısı, " +
+    "hangi haberlerin çekildiği, hangi RSS kaynaklarının hata aldığı gibi detayları içerir.",
+  {
+    outputDir: z
+      .string()
+      .default("newsletters")
+      .describe("Bülten klasörü (varsayılan: newsletters/)"),
+  },
+  async ({ outputDir }) => {
+    try {
+      const dir = resolveOutputDir(outputDir);
+      const reportPath = join(dir, "newsletter-tarama-raporu.md");
+      const content = await readFile(reportPath, "utf-8");
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text:
+              `📊 Tarama Raporu\n` +
+              `Dosya: \`${reportPath}\`\n\n` +
+              `---\n\n` +
+              content,
+          },
+        ],
+      };
+    } catch (err) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text:
+              `📂 Tarama raporu henüz oluşturulmamış. \`fetch_ai_news\` veya \`generate_newsletter\` ` +
+              `çalıştırdıktan sonra rapor otomatik oluşacaktır.\n\n` +
+              `Hata: ${(err as Error).message}`,
           },
         ],
       };
