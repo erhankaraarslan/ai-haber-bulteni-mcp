@@ -57,14 +57,14 @@ const newsParamsShape = {
     .describe("Hedef kitle: c_level (yönetici), product_manager, developer, copilot_user (VS Code + Copilot), cursor_user (Cursor IDE), windsurf_user (Windsurf IDE)"),
   maxItems: z
     .number()
-    .min(3)
-    .max(20)
-    .default(10)
-    .describe("Tavily toplam sonuç sayısı / RSS kaynak başına max haber sayısı (3-20)"),
+    .min(5)
+    .max(25)
+    .default(15)
+    .describe("Tavily toplam sonuç sayısı / RSS kaynak başına max haber sayısı (5-25)"),
   searchDepth: z
     .enum(["basic", "advanced"])
-    .default("basic")
-    .describe("Tavily arama derinliği: basic (1 kredi) veya advanced (2 kredi, daha kaliteli)"),
+    .default("advanced")
+    .describe("Tavily arama derinliği: basic (1 kredi) veya advanced (2 kredi, daha detaylı özet)"),
 };
 
 // ── Ortak Haber Çekme Fonksiyonu ─────────────────────────────────────────────

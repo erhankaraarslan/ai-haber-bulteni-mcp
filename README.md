@@ -150,8 +150,8 @@ Cursor, Windsurf veya Claude Desktop chat'inde:
 |-----------|----------|------------|----------|
 | `persona` | `c_level`, `product_manager`, `developer`, `copilot_user`, `cursor_user`, `windsurf_user` | `developer` | Hedef kitle |
 | `timeframe` | `daily`, `weekly`, `monthly` | `weekly` | Zaman dilimi |
-| `maxItems` | `3` - `20` | `10` | Tavily toplam / RSS kaynak başına max haber |
-| `searchDepth` | `basic`, `advanced` | `basic` | Tavily arama derinliği (advanced = 2x kredi) |
+| `maxItems` | `5` - `25` | `15` | Tavily toplam / RSS kaynak başına max haber |
+| `searchDepth` | `basic`, `advanced` | `advanced` | Tavily arama derinliği (advanced = 2x kredi, daha detaylı özet) |
 
 ## 📡 RSS Kaynakları (27 kaynak)
 
