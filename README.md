@@ -107,6 +107,11 @@ VS Code'da `.vscode/mcp.json` dosyası oluşturun (veya Command Palette > `MCP: 
 | `export_newsletter_html` | Mevcut `.md` bülteni farklı marka ayarlarıyla yeniden HTML'e dönüştürür |
 | `get_available_sources` | Aktif RSS kaynaklarını persona bazında listeler |
 
+### 📁 Bülten Dosyaları Nereye Kaydedilir?
+
+- **Varsayılan:** Açık projenizin/workspace'inizin kökünde `newsletters/` klasörü oluşturulur. Cursor/VS Code MCP'yi workspace dizininde başlattığı için ek ayar gerekmez.
+- **Özel konum:** `NEWSLETTER_OUTPUT_DIR` ortam değişkeni ile farklı bir dizin belirtebilirsiniz.
+
 ## 📝 Prompt
 
 | Prompt | Açıklama |

@@ -10,13 +10,13 @@ import { buildEmailHtml } from "./templates/emailTemplate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const PROJECT_ROOT = resolve(__dirname, "..");
 
 function resolveOutputDir(outputDir: string): string {
   if (resolve(outputDir) === outputDir) return outputDir;
   const envDir = process.env.NEWSLETTER_OUTPUT_DIR;
   if (envDir) return resolve(envDir, outputDir === "newsletters" ? "" : outputDir);
-  return resolve(PROJECT_ROOT, outputDir);
+  // cwd = workspace root when MCP is spawned by Cursor/VS Code → newsletters go to current project
+  return resolve(process.cwd(), outputDir);
 }
 
 if (process.env.NODE_ENV !== "production") {
