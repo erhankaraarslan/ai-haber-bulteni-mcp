@@ -2,7 +2,7 @@ import { writeFile, readFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { FetchNewsResult, TavilyScanResult } from "../types/index.js";
 import { PERSONA_CONFIG, TIMEFRAME_LABELS } from "../config/personas.js";
-import { deduplicateNews } from "../utils/dedup.js";
+import { deduplicateNews, interleaveArrays, sortBySourceDiversity } from "../utils/dedup.js";
 
 const REPORT_FILENAME = "newsletter-tarama-raporu.md";
 const MAX_HISTORY_ENTRIES = 50;
@@ -11,10 +11,9 @@ const SECTION_SEPARATOR = "\n\n---\n\n";
 function buildReportSection(result: FetchNewsResult): string {
   const personaLabel = PERSONA_CONFIG[result.persona]?.label ?? result.persona;
   const timeframeLabel = TIMEFRAME_LABELS[result.timeframe] ?? result.timeframe;
-  const deduped = deduplicateNews([
-    ...result.tavilyResults,
-    ...result.rssResults,
-  ]);
+  const interleaved = interleaveArrays(result.tavilyResults, result.rssResults);
+  const deduped = deduplicateNews(interleaved);
+  const dedupedSorted = sortBySourceDiversity(deduped, 30);
 
   const lines: string[] = [];
 
@@ -28,7 +27,7 @@ function buildReportSection(result: FetchNewsResult): string {
   lines.push(`| **Tavily Haber** | ${result.tavilyResults.length} |`);
   lines.push(`| **RSS Haber** | ${result.rssResults.length} |`);
   lines.push(`| **Toplam (dedup öncesi)** | ${result.totalCount} |`);
-  lines.push(`| **Benzersiz (dedup sonrası)** | ${deduped.length} |`);
+  lines.push(`| **Benzersiz (dedup sonrası)** | ${dedupedSorted.length} |`);
   lines.push("");
 
   if (result.tavilyScanResult) {
@@ -81,9 +80,9 @@ function buildReportSection(result: FetchNewsResult): string {
     lines.push("");
   }
 
-  lines.push(`### 📰 Çekilen Haberler (ilk 15)`);
+  lines.push(`### 📰 Çekilen Haberler (ilk 15, kaynak çeşitliliği sıralı)`);
   lines.push("");
-  const items = deduped.slice(0, 15);
+  const items = dedupedSorted.slice(0, 15);
   if (items.length > 0) {
     lines.push(`| # | Başlık | Kaynak | Tarih |`);
     lines.push(`|---|--------|--------|-------|`);

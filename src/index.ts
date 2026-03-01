@@ -27,7 +27,7 @@ import { fetchFromTavily } from "./services/tavilyService.js";
 import { fetchFromRss } from "./services/rssService.js";
 import { cacheService } from "./services/cacheService.js";
 import { appendReportSection } from "./services/reportService.js";
-import { deduplicateNews } from "./utils/dedup.js";
+import { deduplicateNews, interleaveArrays, sortBySourceDiversity } from "./utils/dedup.js";
 import { PERSONA_CONFIG, TIMEFRAME_LABELS } from "./config/personas.js";
 import { RSS_SOURCES, getSourcesForPersona } from "./config/rssSources.js";
 import { buildNewsletterPrompt } from "./config/prompts.js";
@@ -156,10 +156,9 @@ server.tool(
         ? `\n⚠️ Uyarılar:\n${result.warnings.map((w) => `  - ${w}`).join("\n")}\n`
         : "";
 
-    const allItems = deduplicateNews([
-      ...result.tavilyResults,
-      ...result.rssResults,
-    ]);
+    const interleaved = interleaveArrays(result.tavilyResults, result.rssResults);
+    const deduped = deduplicateNews(interleaved);
+    const allItems = sortBySourceDiversity(deduped, 30);
 
     const tableRows = allItems
       .slice(0, 30)
@@ -177,7 +176,7 @@ server.tool(
             `✅ Haberler başarıyla çekildi!\n\n` +
             `📊 Toplam: ${result.totalCount} haber ` +
             `(Tavily: ${result.tavilyResults.length}, RSS: ${result.rssResults.length}) ` +
-            `→ Dedup sonrası: ${allItems.length}\n` +
+            `→ Dedup sonrası: ${deduped.length} (çeşitlilik sıralı)\n` +
             `🕐 Çekilme zamanı: ${result.fetchedAt}\n` +
             warningText +
             `\n| # | Başlık | Kaynak | Tarih | URL |\n` +
@@ -224,10 +223,9 @@ server.tool(
       };
     }
 
-    const allItems = deduplicateNews([
-      ...newsData.tavilyResults,
-      ...newsData.rssResults,
-    ]);
+    const interleaved = interleaveArrays(newsData.tavilyResults, newsData.rssResults);
+    const deduped = deduplicateNews(interleaved);
+    const allItems = sortBySourceDiversity(deduped, 40);
 
     const tavilyUrls = new Set(newsData.tavilyResults.map((i) => i.url));
     const dedupedTavily = allItems.filter((i) => tavilyUrls.has(i.url));
@@ -802,10 +800,9 @@ server.prompt(
       10
     );
 
-    const allItems = deduplicateNews([
-      ...newsData.tavilyResults,
-      ...newsData.rssResults,
-    ]);
+    const interleaved = interleaveArrays(newsData.tavilyResults, newsData.rssResults);
+    const deduped = deduplicateNews(interleaved);
+    const allItems = sortBySourceDiversity(deduped, 40);
 
     const tavilyUrls = new Set(newsData.tavilyResults.map((i) => i.url));
     const dedupedTavily = allItems.filter((i) => tavilyUrls.has(i.url));

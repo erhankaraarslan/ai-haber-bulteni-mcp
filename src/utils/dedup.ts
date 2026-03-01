@@ -1,5 +1,55 @@
 import type { NewsItem } from "../types/index.js";
 
+/** Tavily ve RSS dizilerini sırayla birleştirir (T[0], R[0], T[1], R[1], ...) */
+export function interleaveArrays<T>(a: T[], b: T[]): T[] {
+  const result: T[] = [];
+  const maxLen = Math.max(a.length, b.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (i < a.length) result.push(a[i]);
+    if (i < b.length) result.push(b[i]);
+  }
+  return result;
+}
+
+/** İlk headCount öğede kaynak çeşitliliği sağlar (kaynak bazlı round-robin) */
+export function sortBySourceDiversity(
+  items: NewsItem[],
+  headCount = 30
+): NewsItem[] {
+  if (items.length <= headCount) {
+    return diversityOrder(items);
+  }
+  const head = items.slice(0, headCount);
+  const tail = items.slice(headCount);
+  return [...diversityOrder(head), ...tail];
+}
+
+function diversityOrder(items: NewsItem[]): NewsItem[] {
+  const bySource = new Map<string, NewsItem[]>();
+  for (const item of items) {
+    const src = item.source || "bilinmeyen";
+    const list = bySource.get(src) ?? [];
+    list.push(item);
+    bySource.set(src, list);
+  }
+  const sources = [...bySource.keys()];
+  const result: NewsItem[] = [];
+  let idx = 0;
+  while (result.length < items.length) {
+    let added = 0;
+    for (const src of sources) {
+      const list = bySource.get(src)!;
+      if (idx < list.length) {
+        result.push(list[idx]);
+        added++;
+      }
+    }
+    if (added === 0) break;
+    idx++;
+  }
+  return result;
+}
+
 const TITLE_WORD_THRESHOLD = 0.7;
 const TITLE_BIGRAM_THRESHOLD = 0.55;
 
