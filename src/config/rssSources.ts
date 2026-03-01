@@ -44,6 +44,18 @@ export const RSS_SOURCES: RssSource[] = [
     persona: ["c_level", "product_manager"],
     language: "en",
   },
+  {
+    name: "a16z Blog",
+    url: "https://a16z.com/feed/",
+    persona: ["c_level"],
+    language: "en",
+  },
+  {
+    name: "The Verge AI",
+    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+    persona: ["c_level", "product_manager"],
+    language: "en",
+  },
 
   // ── PRODUCT MANAGER ───────────────────────────────────────────────────────
   {
@@ -62,12 +74,6 @@ export const RSS_SOURCES: RssSource[] = [
     name: "Google AI Blog",
     url: "https://blog.google/technology/ai/rss/",
     persona: ["product_manager", "c_level", "cursor_user", "windsurf_user"],
-    language: "en",
-  },
-  {
-    name: "The Verge AI",
-    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
-    persona: ["product_manager"],
     language: "en",
   },
   {
@@ -114,6 +120,30 @@ export const RSS_SOURCES: RssSource[] = [
     persona: ["developer", "cursor_user", "windsurf_user"],
     language: "en",
   },
+  {
+    name: "LangChain Blog",
+    url: "https://blog.langchain.dev/rss/",
+    persona: ["developer"],
+    language: "en",
+  },
+  {
+    name: "arXiv cs.AI",
+    url: "https://export.arxiv.org/rss/cs.AI",
+    persona: ["developer"],
+    language: "en",
+  },
+  {
+    name: "Hacker News AI",
+    url: "https://hnrss.org/newest?q=AI+LLM&points=50",
+    persona: ["developer"],
+    language: "en",
+  },
+  {
+    name: "DeepLearning.AI The Batch",
+    url: "https://www.deeplearning.ai/the-batch/feed/",
+    persona: ["developer"],
+    language: "en",
+  },
 
   // ── AI CODING TOOLS (IDE & Copilot) ───────────────────────────────────────
   {
@@ -125,25 +155,25 @@ export const RSS_SOURCES: RssSource[] = [
   {
     name: "GitHub Copilot Changelog",
     url: "https://github.blog/changelog/label/copilot/feed/",
-    persona: ["developer", "copilot_user"],
+    persona: ["developer", "copilot_user", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
     name: "VS Code Blog",
     url: "https://code.visualstudio.com/feed.xml",
-    persona: ["developer", "copilot_user"],
+    persona: ["developer", "copilot_user", "cursor_user", "windsurf_user"],
     language: "en",
   },
   {
     name: "Cursor Announcements",
     url: "https://forum.cursor.com/c/announcements/11.rss",
-    persona: ["developer", "cursor_user"],
+    persona: ["developer", "cursor_user", "copilot_user", "windsurf_user"],
     language: "en",
   },
   {
     name: "Windsurf (Codeium) Blog",
     url: "https://windsurf.com/feed.xml",
-    persona: ["developer", "windsurf_user"],
+    persona: ["developer", "windsurf_user", "copilot_user", "cursor_user"],
     language: "en",
   },
 
@@ -171,6 +201,32 @@ export const RSS_SOURCES: RssSource[] = [
     url: "https://github.blog/ai-and-ml/feed/",
     persona: ["copilot_user"],
     language: "en",
+  },
+  {
+    name: "Microsoft AI DevBlogs",
+    url: "https://devblogs.microsoft.com/ai/feed/",
+    persona: ["copilot_user"],
+    language: "en",
+  },
+
+  // ── TÜRKÇE KAYNAKLAR ─────────────────────────────────────────────────────
+  {
+    name: "Webrazzi",
+    url: "https://webrazzi.com/feed/",
+    persona: ["c_level", "product_manager"],
+    language: "tr",
+  },
+  {
+    name: "ShiftDelete.Net",
+    url: "https://shiftdelete.net/feed",
+    persona: ["developer", "product_manager"],
+    language: "tr",
+  },
+  {
+    name: "Donanım Haber AI",
+    url: "https://www.donanimhaber.com/rss/yapay-zeka",
+    persona: ["developer", "c_level"],
+    language: "tr",
   },
 ];
 

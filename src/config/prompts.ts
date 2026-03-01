@@ -35,12 +35,18 @@ KURALLAR (MUTLAKA UYULMALI):
    ${config.newsletterFormat}
 4. Her haber maddesinin sonuna mutlaka kaynak URL'sini referans linki olarak ekle.
    Format: *Kaynak: [Yayın Adı](url)*
+   ⚠️ SADECE ham verideki gerçek URL'leri kullan. Asla URL uydurma veya tahmin etme.
 5. Emoji ve temiz markdown formatı kullan (okunabilirlik için).
 6. Uydurma haber YAZMA. Sadece sağlanan ham veriyi kullan.
 7. Aynı haberin farklı kaynaklardan gelmiş versiyonları varsa birleştir, tekrar etme.
+   Aynı konuyu bültenin farklı bölümlerinde tekrar işleme.
 8. Bültenin başında tarih ve dönem bilgisini belirt:
    # 🤖 Yapay Zeka ${timeframeLabel} Bülteni
    📅 ${new Date().toLocaleDateString("tr-TR")} | 👤 ${config.label}
+9. UZUNLUK LİMİTİ: Bülten en fazla ~${config.maxLines} satır olmalı. Bu limiti aşma.
+   Haberlerin hepsini dahil etmek zorunda değilsin; en önemli ${config.maxNewsItems} haberi seç.
+10. İÇERİK KURALLARI (bu persona için özel):
+${config.contentGuidelines}
 
 --- HAM VERİ BAŞLANGIÇ ---
 `;

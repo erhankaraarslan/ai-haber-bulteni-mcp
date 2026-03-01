@@ -2,10 +2,22 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { mkdir, writeFile, readFile, readdir } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join, resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { marked } from "marked";
 import juice from "juice";
 import { buildEmailHtml } from "./templates/emailTemplate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROJECT_ROOT = resolve(__dirname, "..");
+
+function resolveOutputDir(outputDir: string): string {
+  if (resolve(outputDir) === outputDir) return outputDir;
+  const envDir = process.env.NEWSLETTER_OUTPUT_DIR;
+  if (envDir) return resolve(envDir, outputDir === "newsletters" ? "" : outputDir);
+  return resolve(PROJECT_ROOT, outputDir);
+}
 
 if (process.env.NODE_ENV !== "production") {
   await import("dotenv/config").catch(() => {});
@@ -362,7 +374,7 @@ server.tool(
   },
   async ({ content, persona, timeframe, logoUrl, brandColor, companyName, outputDir }) => {
     try {
-      const dir = resolve(process.cwd(), outputDir);
+      const dir = resolveOutputDir(outputDir);
       await mkdir(dir, { recursive: true });
 
       const date = new Date().toISOString().slice(0, 10);
@@ -425,7 +437,7 @@ server.tool(
   },
   async ({ outputDir }) => {
     try {
-      const dir = resolve(process.cwd(), outputDir);
+      const dir = resolveOutputDir(outputDir);
       const files = await readdir(dir);
       const mdFiles = files
         .filter((f) => f.endsWith(".md"))
@@ -504,7 +516,7 @@ server.tool(
   },
   async ({ filename, logoUrl, brandColor, companyName, outputDir }) => {
     try {
-      const dir = resolve(process.cwd(), outputDir);
+      const dir = resolveOutputDir(outputDir);
       const mdContent = await readFile(join(dir, filename), "utf-8");
 
       const segments = filename.replace(".md", "").split("-");
@@ -547,6 +559,163 @@ server.tool(
             text: `❌ HTML dönüştürme hatası: ${(error as Error).message}`,
           },
         ],
+      };
+    }
+  }
+);
+
+// ── Tool 7: health_check ────────────────────────────────────────────────────
+
+server.tool(
+  "health_check",
+  "Tüm RSS kaynaklarının erişilebilirliğini test eder. Her kaynağın durumunu, " +
+    "döndürdüğü haber sayısını ve hata bilgisini raporlar.",
+  {
+    persona: z
+      .enum(["c_level", "product_manager", "developer", "copilot_user", "cursor_user", "windsurf_user", "all"])
+      .default("all")
+      .describe("Test edilecek persona (all = tüm kaynaklar)"),
+  },
+  async ({ persona }) => {
+    const Parser = (await import("rss-parser")).default;
+    const rssParser = new Parser({ timeout: 8_000 });
+
+    const sources = persona === "all"
+      ? RSS_SOURCES
+      : getSourcesForPersona(persona as Persona);
+
+    const results: { name: string; url: string; status: string; items: number; error?: string }[] = [];
+
+    const tasks = sources.map((source) => async () => {
+      try {
+        const feed = await rssParser.parseURL(source.url);
+        const count = feed.items?.length ?? 0;
+        results.push({ name: source.name, url: source.url, status: "✅", items: count });
+      } catch (err) {
+        results.push({
+          name: source.name,
+          url: source.url,
+          status: "❌",
+          items: 0,
+          error: (err as Error).message?.slice(0, 80),
+        });
+      }
+    });
+
+    const concurrency = 6;
+    let idx = 0;
+    async function worker() {
+      while (idx < tasks.length) {
+        const i = idx++;
+        await tasks[i]();
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, () => worker()));
+
+    const ok = results.filter((r) => r.status === "✅").length;
+    const fail = results.filter((r) => r.status === "❌").length;
+    const totalItems = results.reduce((sum, r) => sum + r.items, 0);
+
+    const rows = results
+      .map(
+        (r) =>
+          `| ${r.status} | ${r.name} | ${r.items} | ${r.error ?? "—"} |`
+      )
+      .join("\n");
+
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text:
+            `🏥 RSS Kaynak Sağlık Raporu\n\n` +
+            `✅ Başarılı: ${ok} | ❌ Başarısız: ${fail} | 📰 Toplam Haber: ${totalItems}\n\n` +
+            `| Durum | Kaynak | Haber | Hata |\n` +
+            `|-------|--------|-------|------|\n` +
+            rows,
+        },
+      ],
+    };
+  }
+);
+
+// ── Tool 8: validate_links ──────────────────────────────────────────────────
+
+server.tool(
+  "validate_links",
+  "Kaydedilmiş bir bültendeki (.md) tüm URL'leri test eder. " +
+    "Bozuk ve erişilemeyen linkleri raporlar.",
+  {
+    filename: z
+      .string()
+      .describe("Test edilecek .md dosya adı (newsletters/ altında)"),
+    outputDir: z
+      .string()
+      .default("newsletters")
+      .describe("Bülten klasörü (varsayılan: newsletters/)"),
+  },
+  async ({ filename, outputDir }) => {
+    try {
+      const dir = resolveOutputDir(outputDir);
+      const mdContent = await readFile(join(dir, filename), "utf-8");
+
+      const urlRegex = /https?:\/\/[^\s)>\]"']+/g;
+      const urls = [...new Set(mdContent.match(urlRegex) ?? [])];
+
+      if (urls.length === 0) {
+        return {
+          content: [{ type: "text" as const, text: "ℹ️ Bültende hiç URL bulunamadı." }],
+        };
+      }
+
+      const results: { url: string; status: number | string; ok: boolean }[] = [];
+      const concurrency = 8;
+      let idx = 0;
+
+      const tasks = urls.map((url) => async () => {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8_000);
+          const resp = await fetch(url, {
+            method: "HEAD",
+            signal: controller.signal,
+            redirect: "follow",
+            headers: { "User-Agent": "ai-haber-bulteni-link-checker/1.0" },
+          });
+          clearTimeout(timeoutId);
+          results.push({ url, status: resp.status, ok: resp.ok });
+        } catch (err) {
+          results.push({ url, status: (err as Error).message.slice(0, 40), ok: false });
+        }
+      });
+
+      async function worker() {
+        while (idx < tasks.length) {
+          const i = idx++;
+          await tasks[i]();
+        }
+      }
+      await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, () => worker()));
+
+      const ok = results.filter((r) => r.ok).length;
+      const broken = results.filter((r) => !r.ok);
+
+      let report =
+        `🔗 Link Doğrulama Raporu: \`${filename}\`\n\n` +
+        `✅ Geçerli: ${ok} | ❌ Bozuk/Erişilemeyen: ${broken.length} | 🔢 Toplam: ${urls.length}\n`;
+
+      if (broken.length > 0) {
+        report +=
+          `\n| Durum | URL |\n|-------|-----|\n` +
+          broken.map((r) => `| ${r.status} | ${r.url.slice(0, 80)}${r.url.length > 80 ? "..." : ""} |`).join("\n");
+      } else {
+        report += `\n🎉 Tüm linkler geçerli!`;
+      }
+
+      return { content: [{ type: "text" as const, text: report }] };
+    } catch (error) {
+      return {
+        content: [{ type: "text" as const, text: `❌ Link doğrulama hatası: ${(error as Error).message}` }],
       };
     }
   }

@@ -22,6 +22,7 @@ const TRUSTED_AI_DOMAINS = [
   "blog.google",
   "blogs.nvidia.com",
   "blogs.microsoft.com",
+  "devblogs.microsoft.com",
   "aws.amazon.com",
   "huggingface.co",
   "arxiv.org",
@@ -30,11 +31,18 @@ const TRUSTED_AI_DOMAINS = [
   "github.blog",
   "code.visualstudio.com",
   "cursor.com",
+  "forum.cursor.com",
   "windsurf.com",
+  "codeium.com",
   "towardsdatascience.com",
   "latent.space",
   "reuters.com",
   "bloomberg.com",
+  "a16z.com",
+  "deeplearning.ai",
+  "blog.langchain.dev",
+  "simonwillison.net",
+  "bensbites.com",
 ];
 
 async function withRetry<T>(
