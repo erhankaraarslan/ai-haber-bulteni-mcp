@@ -43,7 +43,7 @@ KURALLAR (MUTLAKA UYULMALI):
 8. Bültenin başında tarih ve dönem bilgisini belirt:
    # 🤖 Yapay Zeka ${timeframeLabel} Bülteni
    📅 ${new Date().toLocaleDateString("tr-TR")} | 👤 ${config.label}
-   İlk satırda TL;DR (1-2 cümlelik genel özet) ekle — okur ne bulacağını hemen anlasın.
+   İlk satırda **Yönetici Özeti:** (1-2 cümlelik genel özet) ekle — okur ne bulacağını hemen anlasın.
 9. ZENGİNLEŞTİRME: Ham veride rakam (milyar $, kullanıcı sayısı vb.) varsa mutlaka kullan.
    Yerel/Türkiye haberleri (Webrazzi vb.) varsa dahil et. Güvenlik/dikkat gerektiren haberleri vurgula.
 10. UZUNLUK LİMİTİ: Bülten en fazla ~${config.maxLines} satır olmalı. Bu limiti aşma.
