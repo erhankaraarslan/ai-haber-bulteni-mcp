@@ -158,7 +158,7 @@ server.tool(
 
     const interleaved = interleaveArrays(result.tavilyResults, result.rssResults);
     const deduped = deduplicateNews(interleaved);
-    const allItems = sortBySourceDiversity(deduped, 30);
+    const allItems = sortBySourceDiversity(deduped, 50);
 
     const tableRows = allItems
       .slice(0, 30)

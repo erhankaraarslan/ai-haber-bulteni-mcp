@@ -32,7 +32,10 @@ function diversityOrder(items: NewsItem[]): NewsItem[] {
     list.push(item);
     bySource.set(src, list);
   }
-  const sources = [...bySource.keys()];
+  // Az haberi olan kaynaklara öncelik: önce küçük kaynaklar round-robin'de yer alsın
+  const sources = [...bySource.entries()]
+    .sort((a, b) => a[1].length - b[1].length)
+    .map(([k]) => k);
   const result: NewsItem[] = [];
   let idx = 0;
   while (result.length < items.length) {

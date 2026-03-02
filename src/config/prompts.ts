@@ -48,7 +48,11 @@ KURALLAR (MUTLAKA UYULMALI):
    Yerel/Türkiye haberleri (Webrazzi vb.) varsa dahil et. Güvenlik/dikkat gerektiren haberleri vurgula.
 10. UZUNLUK LİMİTİ: Bülten en fazla ~${config.maxLines} satır olmalı. Bu limiti aşma.
    Haberlerin hepsini dahil etmek zorunda değilsin; en önemli ${config.maxNewsItems} haberi seç.
-11. İÇERİK KURALLARI (bu persona için özel):
+11. KAYNAK ÇEŞİTLİLİĞİ ZORUNLU: Bültende en az 6 farklı kaynaktan (ör. MIT Technology Review,
+   Wired, NVIDIA AI Blog, Google AI Blog, AWS, Webrazzi, The Verge, AI Business, VentureBeat)
+   haber dahil et. Sadece TechCrunch, Bloomberg, Reuters'a odaklanma. RSS bölümündeki
+   farklı kaynaklara mutlaka yer ver.
+12. İÇERİK KURALLARI (bu persona için özel):
 ${config.contentGuidelines}
 
 --- HAM VERİ BAŞLANGIÇ ---

@@ -13,7 +13,7 @@ function buildReportSection(result: FetchNewsResult): string {
   const timeframeLabel = TIMEFRAME_LABELS[result.timeframe] ?? result.timeframe;
   const interleaved = interleaveArrays(result.tavilyResults, result.rssResults);
   const deduped = deduplicateNews(interleaved);
-  const dedupedSorted = sortBySourceDiversity(deduped, 30);
+  const dedupedSorted = sortBySourceDiversity(deduped, 50);
 
   const lines: string[] = [];
 
